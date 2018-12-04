@@ -14,6 +14,15 @@ import homeassistant.helpers.config_validation as cv
 
 REQUIREMENTS = ['pyzway==0.3.0']
 
+SENSOR_TYPES = {
+    'battery': ['Battery Level', '%'],
+    'humidity': ['Humidity', '%'],
+    'temperature': ['Temperature', 'C'],
+    
+
+DEFAULT_ICON_LEVEL = 'mdi:battery'
+DEFAULT_ICON_STATE = 'mdi:power-plug'
+
 _LOGGER = logging.getLogger(__name__)
 
 # Validation of the user's configuration
