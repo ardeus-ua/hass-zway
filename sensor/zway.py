@@ -8,10 +8,11 @@ from homeassistant.const import CONF_URL, CONF_USERNAME, CONF_PASSWORD, CONF_INC
 from homeassistant.const import (
     DEVICE_CLASS_BATTERY, DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_ILLUMINANCE,
     DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_PRESSURE)
+from homeassistant.helpers.icon import icon_for_battery_level
 
 import homeassistant.helpers.config_validation as cv
 
-REQUIREMENTS = ['pyzway==0.2.0']
+REQUIREMENTS = ['pyzway==0.3.0']
 
 _LOGGER = logging.getLogger(__name__)
 
