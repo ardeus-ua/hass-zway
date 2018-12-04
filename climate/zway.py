@@ -10,7 +10,7 @@ from homeassistant.const import CONF_NAME, CONF_URL, CONF_USERNAME, CONF_PASSWOR
     ATTR_UNIT_OF_MEASUREMENT, ATTR_TEMPERATURE
 import homeassistant.helpers.config_validation as cv
 
-REQUIREMENTS = ['pyzway==0.3.0']
+REQUIREMENTS = ['https://github.com/ardeus-ua/pyzway/archive/v0.3.0.zip#pyzway==0.3.0']
 
 _LOGGER = logging.getLogger(__name__)
 
