@@ -5,6 +5,10 @@ import voluptuous as vol
 from homeassistant.core import callback
 from homeassistant.components.sensor import DOMAIN
 from homeassistant.const import CONF_URL, CONF_USERNAME, CONF_PASSWORD, CONF_INCLUDE
+from homeassistant.const import (
+    DEVICE_CLASS_BATTERY, DEVICE_CLASS_HUMIDITY, DEVICE_CLASS_ILLUMINANCE,
+    DEVICE_CLASS_TEMPERATURE, DEVICE_CLASS_PRESSURE)
+
 import homeassistant.helpers.config_validation as cv
 
 REQUIREMENTS = ['pyzway==0.2.0']
@@ -20,14 +24,13 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
 })
 
 SUPPORT_ZWAY = {
-    'switchBinary': 0,
-    'switchMultilevel': SUPPORT_BRIGHTNESS,
-    'switchRGBW': SUPPORT_RGB_COLOR
+    'sensorMultilevel': SUPPORT_BRIGHTNESS,
+    'battery': SUPPORT_RGB_COLOR
 }
 
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
-    """Setup Z-Way Light platform."""
+    """Setup Z-Way Sensor platform."""
 
     import zway
 
@@ -39,71 +42,70 @@ def setup_platform(hass, config, add_devices, discovery_info=None):
     devices = []
     for dev in zwc.devices:
         if dev.is_tagged(include):
-            if (isinstance(dev, zway.devices.SwitchBinary) or
-                    isinstance(dev, zway.devices.SwitchMultilevel) or
-                    isinstance(dev, zway.devices.SwitchRGBW)):
+            if (isinstance(dev, zway.devices.sensorMultilevel) or
+                    isinstance(dev, zway.devices.battery)):
                 _LOGGER.info("Including %s %s: %s", dev.devicetype, dev.id, dev.title)
-                devices.append(ZWayLight(dev))
+                devices.append(ZWaySensor(dev))
     add_devices(devices)
 
 
-class ZWayLight(Light):
-    """Representation of an Z-Way Light"""
+class ZWaySensor(Sensor):
+    """Representation of an Z-Way Sensor"""
 
     def __init__(self, device):
-        self._zlight = device
+        self._zsensor = device
 
     @property
     def unique_id(self):
         """Return the ID of this light."""
-        return self._zlight.id.lower()
+        return self._zsensor.id.lower()
 
     @property
     def name(self):
-        """Return the display name of this light."""
-        return self._zlight.title
+        """Return the display name of this sensor."""
+        return self._zsensor.title
 
     @property
     def supported_features(self):
         """Flag supported features."""
-        return SUPPORT_ZWAY.get(self._zlight.devicetype, 0)
+        return SUPPORT_ZWAY.get(self._zsensor.devicetype, 0)
 
     @property
     def is_on(self):
-        """Return true if light is on."""
-        return self._zlight.on
+        """Return true if sensor is on."""
+        return self._zsensor.on
 
     @property
     def brightness(self):
-        """Brightness of the light (an integer in the range 1-255)."""
-        if self._zlight.devicetype == 'switchMultilevel':
-            return self._zlight.level
+        """Brightness of the sensor (an integer in the range 1-255)."""
+        if self._zsensor.devicetype == 'switchMultilevel':
+            return self._zsensor.level
         else:
             return None
 
     @property
     def rgb_color(self):
         """Return the RGB color value."""
-        if self._zlight.devicetype == 'switchRGBW' and self._zlight.rgb is not None:
-            return list(self._zlight.rgb)
+        if self._zsensor.devicetype == 'switchRGBW' and self._zsensor.rgb is not None:
+            return list(self._zsensor.rgb)
         else:
             return None
 
     def turn_on(self, **kwargs):
-        """Instruct the light to turn on."""
-        if self._zlight.devicetype == 'switchMultilevel':
-            self._zlight.level = kwargs.get(ATTR_BRIGHTNESS, 255)
-        elif self._zlight.devicetype == 'switchRGBW':
-            self._zlight.rgb = tuple(kwargs.get(ATTR_RGB_COLOR))
+        """Instruct the sensor to turn on."""
+        if self._zsensor.devicetype == 'switchMultilevel':
+            self._zsensor.level = kwargs.get(ATTR_BRIGHTNESS, 255)
+        elif self._zsensor.devicetype == 'switchRGBW':
+            self._zsensor.rgb = tuple(kwargs.get(ATTR_RGB_COLOR))
         else:
-            self._zlight.on = True
+            self._zsensor.on = True
 
     def turn_off(self, **kwargs):
-        """Instruct the light to turn off."""
-        self._zlight.on = False
+        """Instruct the sensor to turn off."""
+        self._zsensor.on = False
 
     def update(self):
-        """Fetch new state data for this light.
+        """Fetch new state data for this sensor.
         This is the only method that should fetch new data for Home Assistant.
         """
-        self._zlight.update()
+        self._zsensor.update()
