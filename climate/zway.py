@@ -10,7 +10,7 @@ from homeassistant.const import CONF_NAME, CONF_URL, CONF_USERNAME, CONF_PASSWOR
     ATTR_UNIT_OF_MEASUREMENT, ATTR_TEMPERATURE
 import homeassistant.helpers.config_validation as cv
 
-REQUIREMENTS = ['pyzway==0.3.0']
+REQUIREMENTS = ['pyzway==0.2.0']
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,13 +52,13 @@ class ZWayClimate(Climate):
 
     @property
     def unique_id(self):
-        """Return the ID of this light."""
-        return self._zlight.id.lower()
+        """Return the ID of this climate."""
+        return self._zclimate.id.lower()
 
     @property
     def name(self):
-        """Return the display name of this light."""
-        return self._zlight.title
+        """Return the display name of this climate."""
+        return self._zclimate.title
 
     @property
     def supported_features(self):
@@ -67,7 +67,7 @@ class ZWayClimate(Climate):
 
     @property
     def is_on(self):
-        """Return true if light is on."""
+        """Return true if climate is on."""
         return self._zclimate.on
 
     @property
@@ -87,7 +87,7 @@ class ZWayClimate(Climate):
             return None
 
     def turn_on(self, **kwargs):
-        """Instruct the light to turn on."""
+        """Instruct the climate to turn on."""
         if self._zclimate.devicetype == 'switchMultilevel':
             self._zclimate.level = kwargs.get(ATTR_BRIGHTNESS, 255)
         elif self._zclimate.devicetype == 'switchRGBW':
@@ -96,11 +96,11 @@ class ZWayClimate(Climate):
             self._zclimate.on = True
 
     def turn_off(self, **kwargs):
-        """Instruct the light to turn off."""
+        """Instruct the climate to turn off."""
         self._zclimate.on = False
 
     def update(self):
-        """Fetch new state data for this light.
+        """Fetch new state data for this climate.
         This is the only method that should fetch new data for Home Assistant.
         """
         self._zclimate.update()
