@@ -12,7 +12,7 @@ from homeassistant.helpers.icon import icon_for_battery_level
 
 import homeassistant.helpers.config_validation as cv
 
-REQUIREMENTS = ['https://github.com/ardeus-ua/pyzway/archive/v0.3.0.zip#pyzway==0.3.0']
+REQUIREMENTS = ['https://github.com/ardeus-ua/pyzway/archive/master.zip#pyzway==0.3.0']
 
 SENSOR_TYPES = {
     'battery': ['Battery Level', '%'],
